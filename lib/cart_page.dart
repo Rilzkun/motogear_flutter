@@ -1,42 +1,60 @@
 import 'package:flutter/material.dart';
 
-// Halaman keranjang
-class CartPage extends StatelessWidget {
-  const CartPage({super.key});
+// CartPage menggunakan StatefulWidget karena jumlah produk dapat berubah.
+class CartPage extends StatefulWidget {
+  final String produk;
+  final int harga;
+  final String gambar;
+
+  const CartPage({
+    super.key,
+    required this.produk,
+    required this.harga,
+    required this.gambar,
+  });
+
+  @override
+  State<CartPage> createState() => _CartPageState();
+}
+
+// State untuk CartPage.
+class _CartPageState extends State<CartPage> {
+  int jumlah = 1;
 
   @override
   Widget build(BuildContext context) {
+    // Menghitung subtotal.
+    int subtotal = widget.harga * jumlah;
+
+    // Menghitung total dengan ongkir.
+    int total = subtotal + 20000;
+
     return Scaffold(
-      // Mengatur warna background halaman
       backgroundColor: Colors.grey.shade100,
 
-      // AppBar digunakan sebagai bagian atas halaman
+      // AppBar halaman keranjang.
       appBar: AppBar(
         title: const Text('Keranjang MotoGear'),
+        backgroundColor: Colors.grey.shade100,
+        elevation: 0,
 
-        // Tombol kembali
+        // Tombol kembali.
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-
           onPressed: () {
-            // Navigator.pop digunakan untuk kembali
-            // ke halaman Home sebelumnya
             Navigator.pop(context);
           },
         ),
       ),
 
-      // Isi halaman
+      // Isi keranjang.
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
-
-          // Column menyusun widget secara vertikal
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              // Judul halaman
               const Text(
                 'Produk di Keranjang',
                 style: TextStyle(
@@ -45,326 +63,168 @@ class CartPage extends StatelessWidget {
                 ),
               ),
 
-              // SizedBox memberikan jarak
               const SizedBox(height: 20),
 
-              // Container digunakan sebagai card produk
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(15),
-
-                // BoxDecoration mengatur tampilan card
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-
-                  // BoxShadow memberikan efek bayangan
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-
-                // Stack digunakan untuk menumpuk gambar
-                // dan label produk
-                child: Stack(
-                  children: [
-
-                    // Row menyusun gambar dan informasi produk
-                    Row(
-                      children: [
-
-                        // Image.asset digunakan untuk menampilkan
-                        // gambar helm dari folder assets
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            'assets/helm.jpeg',
-                            width: 120,
-                            height: 120,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-
-                        // SizedBox memberikan jarak
-                        const SizedBox(width: 15),
-
-                        // Expanded memberikan ruang untuk informasi
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              // Nama produk
-                              Text(
-                                'Helm Full Face',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              // SizedBox memberikan jarak
-                              SizedBox(height: 8),
-
-                              // Harga
-                              Text(
-                                'Rp450.000',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-
-                              // SizedBox memberikan jarak
-                              SizedBox(height: 8),
-
-                              // Jumlah
-                              Text(
-                                'Jumlah: 1',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // Positioned digunakan untuk menempatkan
-                    // label di atas gambar produk
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          '10% OFF',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
+              // Card produk.
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Row(
+                    children: [
+                      // Gambar produk.
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          widget.gambar,
+                          width: 110,
+                          height: 110,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(width: 15),
+
+                      // Informasi produk.
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.produk,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            Text(
+                              'Rp${widget.harga}',
+                              style: TextStyle(
+                                color: Colors.blue.shade800,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            // Tombol jumlah.
+                            Row(
+                              children: [
+                                // Tombol kurang.
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (jumlah > 1) {
+                                        jumlah--;
+                                      }
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.remove,
+                                  ),
+                                ),
+
+                                // Jumlah produk.
+                                Text(
+                                  '$jumlah',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+
+                                // Tombol tambah.
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      jumlah++;
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.add,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
-              // SizedBox memberikan jarak
               const SizedBox(height: 20),
 
-              // Card produk jaket
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(15),
-
-                // BoxDecoration mengatur tampilan card
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-
-                  // BoxShadow memberikan efek bayangan
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-
-                // Stack digunakan untuk menumpuk gambar
-                // dan informasi produk
-                child: Stack(
-                  children: [
-
-                    // Row menyusun gambar dan informasi produk
-                    Row(
-                      children: [
-
-                        // Image.asset digunakan untuk menampilkan
-                        // gambar jaket dari folder assets
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            'assets/jaket.jpeg',
-                            width: 120,
-                            height: 120,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-
-                        // SizedBox memberikan jarak
-                        const SizedBox(width: 15),
-
-                        // Expanded memberikan ruang untuk informasi
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              // Nama produk
-                              Text(
-                                'Jaket Riding',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              // SizedBox memberikan jarak
-                              SizedBox(height: 8),
-
-                              // Harga
-                              Text(
-                                'Rp650.000',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
-
-                              // SizedBox memberikan jarak
-                              SizedBox(height: 8),
-
-                              // Jumlah
-                              Text(
-                                'Jumlah: 1',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // Positioned digunakan untuk menempatkan
-                    // label di atas gambar jaket
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          '10% OFF',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
+              // Ringkasan belanja.
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Ringkasan Belanja',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(height: 15),
+
+                      Text(
+                        '${widget.produk} x$jumlah',
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      Text(
+                        'Subtotal       Rp$subtotal',
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      const Text(
+                        'Ongkir          Rp20000',
+                      ),
+
+                      const Divider(height: 25),
+
+                      // Total otomatis berubah.
+                      Text(
+                        'Total           Rp$total',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade800,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
-              // Jarak sebelum ringkasan belanja
               const SizedBox(height: 20),
 
-              // Card informasi
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(15),
-
-                // BoxDecoration mengatur tampilan card
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-
-                  // BoxShadow memberikan efek bayangan
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-
-                    // Text ringkasan
-                    Text(
-                      'Ringkasan Belanja',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    // SizedBox memberikan jarak
-                    SizedBox(height: 15),
-
-                    // Text harga
-                    Text(
-                      'Subtotal                 Rp450.000',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
-
-                    // SizedBox memberikan jarak
-                    SizedBox(height: 8),
-
-                    // Text ongkir
-                    Text(
-                      'Ongkir                    Rp20.000',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
-
-                    // SizedBox memberikan jarak
-                    SizedBox(height: 8),
-
-                    // Text total
-                    Text(
-                      'Total                      Rp470.000',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // SizedBox memberikan jarak
-              const SizedBox(height: 25),
-
-              // Tombol kembali
+              // Tombol kembali.
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigator.pop digunakan untuk kembali
-                    // ke halaman utama
                     Navigator.pop(context);
                   },
-                  child: const Text('Kembali ke Beranda'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue.shade800,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text(
+                    'Kembali ke Beranda',
+                  ),
                 ),
               ),
             ],

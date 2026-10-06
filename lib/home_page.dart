@@ -1,35 +1,43 @@
 import 'package:flutter/material.dart';
 import 'cart_page.dart';
 
-// Halaman utama aplikasi
-class HomePage extends StatelessWidget {
+// HomePage menggunakan StatefulWidget karena ada state pencarian dan favorit.
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+// State untuk HomePage.
+class _HomePageState extends State<HomePage> {
+  String search = '';
+  bool favorite = false;
+
+  @override
   Widget build(BuildContext context) {
+    // Menentukan apakah produk ditampilkan berdasarkan pencarian.
+    bool tampilHelm =
+    'helm full face'.contains(search.toLowerCase());
+
+    bool tampilJaket =
+    'jaket riding'.contains(search.toLowerCase());
+
     return Scaffold(
-      // Mengatur warna background halaman
       backgroundColor: Colors.grey.shade100,
 
-      // Isi utama halaman
+      // SafeArea menjaga isi halaman.
       body: SafeArea(
-        // SafeArea membuat isi tidak tertutup area perangkat
         child: SingleChildScrollView(
-          // SingleChildScrollView membuat halaman dapat di-scroll
           child: Padding(
-            // Padding memberikan jarak dari tepi layar
             padding: const EdgeInsets.all(20),
-
-            // Column menyusun widget secara vertikal
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                // Row menyusun nama aplikasi dan icon secara horizontal
+                // Bagian judul dan tombol.
                 Row(
                   children: [
-
-                    // Expanded membuat Text mengambil ruang yang tersedia
                     const Expanded(
                       child: Text(
                         'MotoGear',
@@ -40,59 +48,63 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
 
-                    // Icon keranjang dibuat sebagai tombol untuk membuka CartPage
+                    // Tombol keranjang.
                     IconButton(
                       icon: const Icon(
                         Icons.shopping_cart_outlined,
                         size: 28,
                       ),
                       onPressed: () {
-                        // Navigator.push digunakan untuk membuka halaman Cart
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const CartPage(),
+                            builder: (_) => const CartPage(
+                              produk: 'Helm Full Face',
+                              harga: 450000,
+                              gambar: 'assets/helm.jpeg',
+                            ),
                           ),
                         );
                       },
                     ),
 
-                    // SizedBox memberikan jarak horizontal
-                    const SizedBox(width: 15),
-
-                    // Icon untuk favorit
-                    const Icon(
-                      Icons.favorite_border,
-                      size: 28,
+                    // Tombol favorit.
+                    IconButton(
+                      icon: Icon(
+                        favorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: favorite ? Colors.red : Colors.black,
+                        size: 28,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          favorite = !favorite;
+                        });
+                      },
                     ),
                   ],
                 ),
 
-                // SizedBox memberikan jarak vertikal
-                const SizedBox(height: 8),
-
-                // Text untuk deskripsi aplikasi
-                Text(
+                const Text(
                   'Perlengkapan Motor untuk Setiap Perjalanan',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(color: Colors.grey),
                 ),
 
-                // SizedBox memberikan jarak
                 const SizedBox(height: 20),
 
-                // TextField digunakan untuk mencari produk
+                // Search produk.
                 TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      search = value;
+                    });
+                  },
                   decoration: InputDecoration(
                     hintText: 'Cari perlengkapan motor...',
                     prefixIcon: const Icon(Icons.search),
-
-                    // Mengatur tampilan TextField
                     filled: true,
                     fillColor: Colors.white,
-
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -100,10 +112,8 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
 
-                // SizedBox memberikan jarak
                 const SizedBox(height: 25),
 
-                // Text judul
                 const Text(
                   'Halo, Rider! 👋',
                   style: TextStyle(
@@ -112,76 +122,58 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
 
-                // SizedBox memberikan jarak
                 const SizedBox(height: 5),
 
-                // Text deskripsi
-                Text(
+                const Text(
                   'Lengkapi kebutuhan riding kamu di MotoGear.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(color: Colors.grey),
                 ),
 
-                // SizedBox memberikan jarak
                 const SizedBox(height: 20),
 
-                // Container digunakan sebagai banner
+                // Banner.
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
-
-                  // BoxDecoration mengatur tampilan Container
                   decoration: BoxDecoration(
                     color: Colors.blue.shade800,
                     borderRadius: BorderRadius.circular(20),
                   ),
-
-                  // Column menyusun isi banner secara vertikal
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-
-                      // Icon motor
+                  child: const Row(
+                    children: [
                       Icon(
                         Icons.two_wheeler,
                         color: Colors.white,
                         size: 45,
                       ),
 
-                      // SizedBox memberikan jarak
-                      SizedBox(height: 10),
+                      SizedBox(width: 15),
 
-                      // Text judul banner
-                      Text(
-                        'PERLENGKAPAN RIDING',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      // SizedBox memberikan jarak
-                      SizedBox(height: 5),
-
-                      // Text isi banner
-                      Text(
-                        'Aman • Nyaman • Stylish',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
+                      Column(
+                        crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'PERLENGKAPAN RIDING',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Aman • Nyaman • Stylish',
+                            style: TextStyle(
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
 
-                // SizedBox memberikan jarak
                 const SizedBox(height: 25),
 
-                // Judul kategori
                 const Text(
                   'Kategori',
                   style: TextStyle(
@@ -190,249 +182,171 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
 
-                // SizedBox memberikan jarak
                 const SizedBox(height: 15),
 
-                // Row untuk menampilkan kategori
-                Row(
+                // Kategori.
+                const Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceAround,
                   children: [
-
-                    // Expanded membuat kategori memiliki ruang yang sama
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
+                    Column(
+                      children: [
+                        Icon(
+                          Icons.sports_motorsports,
+                          size: 30,
                         ),
-
-                        child: Column(
-                          children: const [
-
-                            // Icon kategori helm
-                            Icon(
-                              Icons.sports_motorsports,
-                              size: 35,
-                            ),
-
-                            // SizedBox memberikan jarak
-                            SizedBox(height: 8),
-
-                            // Text kategori
-                            Text('Helm'),
-                          ],
-                        ),
-                      ),
+                        Text('Helm'),
+                      ],
                     ),
-
-                    // SizedBox memberikan jarak
-                    const SizedBox(width: 10),
-
-                    // Expanded kategori kedua
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
+                    Column(
+                      children: [
+                        Icon(
+                          Icons.checkroom,
+                          size: 30,
                         ),
-
-                        child: Column(
-                          children: const [
-
-                            // Icon kategori jaket
-                            Icon(
-                              Icons.checkroom,
-                              size: 35,
-                            ),
-
-                            // SizedBox memberikan jarak
-                            SizedBox(height: 8),
-
-                            // Text kategori
-                            Text('Jaket'),
-                          ],
-                        ),
-                      ),
+                        Text('Jaket'),
+                      ],
                     ),
-
-                    // SizedBox memberikan jarak
-                    const SizedBox(width: 10),
-
-                    // Expanded kategori ketiga
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
+                    Column(
+                      children: [
+                        Icon(
+                          Icons.back_hand,
+                          size: 30,
                         ),
-
-                        child: Column(
-                          children: const [
-
-                            // Icon kategori sarung
-                            Icon(
-                              Icons.back_hand,
-                              size: 35,
-                            ),
-
-                            // SizedBox memberikan jarak
-                            SizedBox(height: 8),
-
-                            // Text kategori
-                            Text('Sarung'),
-                          ],
-                        ),
-                      ),
+                        Text('Sarung'),
+                      ],
                     ),
                   ],
                 ),
 
-                // SizedBox memberikan jarak
-                const SizedBox(height: 25),
+                const SizedBox(height: 30),
 
-                // Judul produk
                 const Text(
-                  'Produk Pilihan',
+                  'Produk',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
 
-                // SizedBox memberikan jarak
                 const SizedBox(height: 15),
 
-                // Row untuk produk
+                // Produk ditampilkan sesuai pencarian.
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    // Produk pertama
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigator.push membuka halaman Cart
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CartPage(),
-                            ),
-                          );
-                        },
-
-                        child: Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-
-                              // Icon produk
-                              Icon(
-                                Icons.sports_motorsports,
-                                size: 70,
-                              ),
-
-                              // SizedBox memberikan jarak
-                              SizedBox(height: 10),
-
-                              // Nama produk
-                              Text(
-                                'Helm Full Face',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              // SizedBox memberikan jarak
-                              SizedBox(height: 5),
-
-                              // Harga produk
-                              Text(
-                                'Rp450.000',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
+                    // Helm hanya tampil jika sesuai pencarian.
+                    if (tampilHelm)
+                      Expanded(
+                        child: _productCard(
+                          'Helm Full Face',
+                          'Rp450.000',
+                          Icons.sports_motorsports,
+                          'assets/helm.jpeg',
                         ),
                       ),
-                    ),
 
-                    // SizedBox memberikan jarak antar produk
-                    const SizedBox(width: 15),
+                    // Jarak hanya jika kedua produk tampil.
+                    if (tampilHelm && tampilJaket)
+                      const SizedBox(width: 10),
 
-                    // Produk kedua
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigator.push membuka halaman Cart
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CartPage(),
-                            ),
-                          );
-                        },
-
-                        child: Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-
-                              // Icon produk
-                              Icon(
-                                Icons.checkroom,
-                                size: 70,
-                              ),
-
-                              // SizedBox memberikan jarak
-                              SizedBox(height: 10),
-
-                              // Nama produk
-                              Text(
-                                'Jaket Riding',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              // SizedBox memberikan jarak
-                              SizedBox(height: 5),
-
-                              // Harga produk
-                              Text(
-                                'Rp650.000',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
+                    // Jaket hanya tampil jika sesuai pencarian.
+                    if (tampilJaket)
+                      Expanded(
+                        child: _productCard(
+                          'Jaket Riding',
+                          'Rp650.000',
+                          Icons.checkroom,
+                          'assets/jaket.jpeg',
                         ),
                       ),
-                    ),
                   ],
                 ),
 
-                // SizedBox memberikan jarak bagian bawah
+                // Jika produk tidak ditemukan.
+                if (!tampilHelm && !tampilJaket)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(30),
+                      child: Text(
+                        'Produk tidak ditemukan.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+
                 const SizedBox(height: 30),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget kartu produk.
+  Widget _productCard(
+      String nama,
+      String harga,
+      IconData icon,
+      String gambar,
+      ) {
+    return GestureDetector(
+      // Ketika produk diklik, masuk ke keranjang.
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CartPage(
+              produk: nama,
+              harga: nama == 'Helm Full Face'
+                  ? 450000
+                  : 650000,
+              gambar: gambar,
+            ),
+          ),
+        );
+      },
+
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              // Icon produk.
+              Icon(
+                icon,
+                size: 60,
+                color: Colors.blue.shade800,
+              ),
+
+              const SizedBox(height: 8),
+
+              // Nama produk.
+              Text(
+                nama,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              // Harga produk.
+              Text(harga),
+
+              const SizedBox(height: 8),
+
+              // Petunjuk bahwa produk bisa diklik.
+              const Text(
+                'Lihat produk',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ),
       ),
